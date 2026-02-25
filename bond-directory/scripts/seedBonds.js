@@ -74,9 +74,8 @@ async function seed() {
         // Pre-compute normalized rating
         const nr = normalizeRating(bond.creditRating);
 
-        // Enrich issuer data from issuer list if available
+        // Issuer data is embedded in bond documents
         const issuerData = bond.issuer || {};
-        const enriched = issuerMap.get(issuerData.id);
 
         const doc = {
             _id: bond.isin,
@@ -139,27 +138,27 @@ async function seed() {
     // Compound indexes for common query patterns
     await collection.createIndex(
         { activeStatus: 1, normalizedRating: 1 },
-        { name: 'idx_status_rating' }
+        { name: 'idx_status_rating' },
     );
     await collection.createIndex(
         { activeStatus: 1, maturityDate: 1 },
-        { name: 'idx_status_maturity' }
+        { name: 'idx_status_maturity' },
     );
     await collection.createIndex(
         { 'issuer.id': 1, activeStatus: 1, maturityDate: 1 },
-        { name: 'idx_issuer_status_maturity' }
+        { name: 'idx_issuer_status_maturity' },
     );
 
     // Text search index
     await collection.createIndex(
         { isin: 'text', 'issuer.name': 'text' },
-        { name: 'idx_text_search', weights: { isin: 10, 'issuer.name': 5 } }
+        { name: 'idx_text_search', weights: { isin: 10, 'issuer.name': 5 } },
     );
 
     // Issuer aggregation support
     await collection.createIndex(
         { 'issuer.id': 1, 'issuer.name': 1 },
-        { name: 'idx_issuer_agg' }
+        { name: 'idx_issuer_agg' },
     );
 
     console.log('[Seed] All indexes created.');
@@ -178,7 +177,7 @@ async function seed() {
     const ratingDist = await collection.aggregate([
         { $group: { _id: '$normalizedRating', count: { $sum: 1 } } },
         { $sort: { count: -1 } },
-        { $limit: 10 }
+        { $limit: 10 },
     ]).toArray();
     console.log('\nTop 10 Rating Distribution:');
     ratingDist.forEach(r => console.log(`  ${(r._id || 'null').padEnd(12)} ${r.count}`));

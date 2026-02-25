@@ -24,8 +24,8 @@ class IndiaBondInfoClient {
             headers: {
                 'Accept': 'application/json, text/plain, */*',
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-                'Referer': 'https://www.indiabondinfo.nsdl.com/CBDServices/'
-            }
+                'Referer': 'https://www.indiabondinfo.nsdl.com/CBDServices/',
+            },
         });
 
         // Rate limiting
@@ -43,7 +43,7 @@ class IndiaBondInfoClient {
             resetTimeout: config.resetTimeout || 60000,
             onStateChange: ({ from, to }) => {
                 console.log(`[IndiaBondInfo] Circuit breaker: ${from} → ${to}`);
-            }
+            },
         });
 
         // Stats
@@ -167,7 +167,7 @@ class IndiaBondInfoClient {
      */
     async getListedSecurities(pageNo = 1, pageSize = 100, status = '') {
         const data = await this._requestWithRetry('/listedsecurities', {
-            params: { pgno: pageNo, pgsize: pageSize, status }
+            params: { pgno: pageNo, pgsize: pageSize, status },
         });
         console.log(`[IndiaBondInfo] Listed securities (pg ${pageNo}): ${Array.isArray(data) ? data.length : 0} records`);
         return data || [];
@@ -244,7 +244,7 @@ class IndiaBondInfoClient {
      */
     async getDropdownMetadata(attrKey) {
         const data = await this._requestWithRetry('/dropdown', {
-            params: { attrkey: attrKey }
+            params: { attrkey: attrKey },
         });
         console.log(`[IndiaBondInfo] Dropdown (${attrKey}): ${Array.isArray(data) ? data.length : 0} options`);
         return data || [];
@@ -271,7 +271,7 @@ class IndiaBondInfoClient {
      */
     async getIssuers() {
         const data = await this._requestWithRetry('/issuer');
-        console.log(`[IndiaBondInfo] Fetched issuer data`);
+        console.log('[IndiaBondInfo] Fetched issuer data');
         return data || [];
     }
 
@@ -280,7 +280,7 @@ class IndiaBondInfoClient {
      */
     async getRatingMetadata() {
         const data = await this._requestWithRetry('/rating');
-        console.log(`[IndiaBondInfo] Fetched rating metadata`);
+        console.log('[IndiaBondInfo] Fetched rating metadata');
         return data || [];
     }
 
@@ -289,7 +289,7 @@ class IndiaBondInfoClient {
     getStats() {
         return {
             ...this.stats,
-            circuitBreaker: this.circuitBreaker.getStatus()
+            circuitBreaker: this.circuitBreaker.getStatus(),
         };
     }
 
@@ -314,7 +314,7 @@ class IndiaBondInfoClient {
             { name: 'Previous Issuance', fn: () => this.getPreviousIssuance() },
             { name: 'Dropdown (INSTRTYP)', fn: () => this.getDropdownMetadata('INSTRTYP') },
             { name: 'Issuers', fn: () => this.getIssuers() },
-            { name: 'Rating Metadata', fn: () => this.getRatingMetadata() }
+            { name: 'Rating Metadata', fn: () => this.getRatingMetadata() },
         ];
 
         const results = {};
@@ -326,13 +326,13 @@ class IndiaBondInfoClient {
                 results[test.name] = {
                     success: true,
                     count: Array.isArray(data) ? data.length : (data ? 1 : 0),
-                    sample: Array.isArray(data) ? data[0] : data
+                    sample: Array.isArray(data) ? data[0] : data,
                 };
                 console.log(`✅ ${test.name}: ${results[test.name].count} records\n`);
             } catch (error) {
                 results[test.name] = {
                     success: false,
-                    error: error.message
+                    error: error.message,
                 };
                 console.log(`❌ ${test.name}: ${error.message}\n`);
             }
@@ -349,10 +349,10 @@ const indiaBondInfoClient = new IndiaBondInfoClient({
     maxRetries: 3,
     baseBackoffMs: 2000,
     failureThreshold: 5,
-    resetTimeout: 60000
+    resetTimeout: 60000,
 });
 
 module.exports = {
     IndiaBondInfoClient,
-    indiaBondInfoClient
+    indiaBondInfoClient,
 };

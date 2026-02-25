@@ -21,7 +21,7 @@ class IndiaBondInfoPublicClient {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
                 'Accept': 'application/json',
                 'Accept-Language': 'en-US,en;q=0.9',
-            }
+            },
         });
 
         this.requestDelay = config.requestDelay || 1000; // 1 second between requests
@@ -57,14 +57,14 @@ class IndiaBondInfoPublicClient {
                 params: {
                     page: page - 1, // API might be 0-indexed
                     size: limit,
-                    sort: 'isin,asc'
-                }
+                    sort: 'isin,asc',
+                },
             });
 
             console.log(`[IndiaBondInfo] Fetched page ${page}, ${response.data.content?.length || 0} bonds`);
             return response.data;
         } catch (error) {
-            console.error(`[IndiaBondInfo] Error fetching bonds:`, error.message);
+            console.error('[IndiaBondInfo] Error fetching bonds:', error.message);
             throw error;
         }
     }
@@ -101,12 +101,12 @@ class IndiaBondInfoPublicClient {
 
         try {
             const response = await this.client.get('/search', {
-                params: { q: query }
+                params: { q: query },
             });
             console.log(`[IndiaBondInfo] Search "${query}" returned ${response.data.length || 0} results`);
             return response.data;
         } catch (error) {
-            console.error(`[IndiaBondInfo] Error searching bonds:`, error.message);
+            console.error('[IndiaBondInfo] Error searching bonds:', error.message);
             throw error;
         }
     }
@@ -130,10 +130,10 @@ class IndiaBondInfoPublicClient {
 
 // Export singleton instance
 const indiaBondInfoClient = new IndiaBondInfoPublicClient({
-    requestDelay: 1000 // 1 second between requests (be respectful)
+    requestDelay: 1000, // 1 second between requests (be respectful)
 });
 
 module.exports = {
     IndiaBondInfoPublicClient,
-    indiaBondInfoClient
+    indiaBondInfoClient,
 };

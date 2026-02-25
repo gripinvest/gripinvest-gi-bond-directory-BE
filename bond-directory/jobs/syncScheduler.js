@@ -80,7 +80,7 @@ function startScheduler() {
     cron.schedule(schedule, () => {
         runSync('daily', false);
     }, {
-        timezone: 'Asia/Kolkata'
+        timezone: 'Asia/Kolkata',
     });
 
     console.log(`[Scheduler] ✅ Bond sync scheduled: ${schedule} (Asia/Kolkata)`);
@@ -89,7 +89,7 @@ function startScheduler() {
     cron.schedule('0 3 * * 0', () => {
         runSync('weekly', true);
     }, {
-        timezone: 'Asia/Kolkata'
+        timezone: 'Asia/Kolkata',
     });
 
     console.log('[Scheduler] ✅ Deep sync scheduled: Sunday 3:00 AM IST');
@@ -108,7 +108,7 @@ function getSchedulerStatus() {
     return {
         isRunning,
         schedule: process.env.BOND_SYNC_SCHEDULE || '0 2 */12 * *',
-        timezone: 'Asia/Kolkata'
+        timezone: 'Asia/Kolkata',
     };
 }
 

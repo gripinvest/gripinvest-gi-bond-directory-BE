@@ -12,33 +12,33 @@ const bondHistorySchema = new mongoose.Schema({
         type: String,
         required: true,
         uppercase: true,
-        index: true
+        index: true,
     },
 
     fieldChanged: {
         type: String,
-        required: true
+        required: true,
         // e.g. "creditRating", "activeStatus", "isRestructured", "couponRate"
     },
 
     oldValue: {
-        type: mongoose.Schema.Types.Mixed
+        type: mongoose.Schema.Types.Mixed,
     },
 
     newValue: {
-        type: mongoose.Schema.Types.Mixed
+        type: mongoose.Schema.Types.Mixed,
     },
 
     changedAt: {
         type: Date,
         default: Date.now,
-        index: true
+        index: true,
     },
 
     // Which sync run detected this change
     syncRunId: {
-        type: String
-    }
+        type: String,
+    },
 }, {
     collection: 'academy_bond_history',
     // No timestamps — changedAt IS the timestamp

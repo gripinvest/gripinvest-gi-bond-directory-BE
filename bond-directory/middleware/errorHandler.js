@@ -46,7 +46,7 @@ function errorHandler(err, req, res, _next) {
     } else {
         // In production, only log unexpected errors with stack
         if (!err.isOperational) {
-            console.error(`[FATAL] Unexpected error:`, {
+            console.error('[FATAL] Unexpected error:', {
                 statusCode,
                 message: err.message,
                 stack: err.stack,

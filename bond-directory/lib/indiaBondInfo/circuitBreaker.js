@@ -12,7 +12,7 @@
 const STATES = {
     CLOSED: 'CLOSED',       // Normal operation
     OPEN: 'OPEN',           // Rejecting requests (upstream is down)
-    HALF_OPEN: 'HALF_OPEN'  // Testing if upstream recovered
+    HALF_OPEN: 'HALF_OPEN',  // Testing if upstream recovered
 };
 
 class CircuitBreaker {
@@ -107,7 +107,7 @@ class CircuitBreaker {
             totalRequests: this.totalRequests,
             successCount: this.successCount,
             lastFailureTime: this.lastFailureTime,
-            nextRetryTime: this.nextRetryTime
+            nextRetryTime: this.nextRetryTime,
         };
     }
 

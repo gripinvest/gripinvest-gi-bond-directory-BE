@@ -15,63 +15,63 @@ const issuerSchema = new mongoose.Schema({
         unique: true,
         lowercase: true,
         trim: true,
-        index: true
+        index: true,
     },
 
     name: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
     },
 
     sector: {
         type: String,
-        trim: true
+        trim: true,
     },
 
     issuerType: {
         type: String,
-        trim: true
+        trim: true,
         // e.g. "Corporate", "PSU", "Government", "Financial Institution"
     },
 
     ownershipType: {
         type: String,
         enum: ['private', 'psu', 'government', 'unknown'],
-        default: 'unknown'
+        default: 'unknown',
     },
 
     // Rolling counts updated on every sync
     totalActiveBonds: {
         type: Number,
-        default: 0
+        default: 0,
     },
 
     totalMaturedBonds: {
         type: Number,
-        default: 0
+        default: 0,
     },
 
     // Rating distribution snapshot — { "AAA": 3, "AA+": 1, "AA": 2 }
     ratingSummary: {
         type: Map,
         of: Number,
-        default: {}
+        default: {},
     },
 
     // Avg coupon rate across active bonds
     avgCouponRate: {
         type: Number,
-        default: 0
+        default: 0,
     },
 
     // For text search
     searchText: {
-        type: String
-    }
+        type: String,
+    },
 }, {
     timestamps: true,
-    collection: 'academy_issuers'
+    collection: 'academy_issuers',
 });
 
 // Text search index
@@ -96,10 +96,10 @@ issuerSchema.statics.upsertFromBond = async function (issuerData) {
                 sector: issuerData.sector || undefined,
                 issuerType: issuerData.issuerType || undefined,
                 ownershipType: issuerData.ownershipType || 'unknown',
-                searchText: `${issuerData.name} ${issuerData.sector || ''} ${issuerData.issuerType || ''}`
-            }
+                searchText: `${issuerData.name} ${issuerData.sector || ''} ${issuerData.issuerType || ''}`,
+            },
         },
-        { upsert: true, new: true }
+        { upsert: true, new: true },
     );
 };
 

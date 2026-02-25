@@ -233,7 +233,7 @@ bondRoutes.get('/search', validate(schemas.searchSchema), asyncHandler(async (re
         if (!fallbackDb) return sendError(res, 503, 'Bond data not available');
         let results = fallbackDb.bonds.filter(b =>
             (b.isin && b.isin.includes(safeQ.toUpperCase())) ||
-            (b.issuer?.name && b.issuer.name.toLowerCase().includes(safeQ.toLowerCase()))
+            (b.issuer?.name && b.issuer.name.toLowerCase().includes(safeQ.toLowerCase())),
         );
         if (status && status !== 'all') results = results.filter(b => b.activeStatus?.toLowerCase() === status.toLowerCase());
         sendSuccess(res, { query: safeQ, count: Math.min(results.length, lim), results: results.slice(0, lim) });
@@ -392,7 +392,7 @@ issuerRoutes.get('/search', asyncHandler(async (req, res) => {
                         issuerType: { $first: '$issuer.issuerType' },
                         ownershipType: { $first: '$issuer.ownershipType' },
                         totalActiveBonds: { $sum: 1 },
-                    }
+                    },
                 },
                 { $sort: { totalActiveBonds: -1 } },
                 { $limit: lim },
@@ -484,7 +484,7 @@ issuerRoutes.get('/:id', asyncHandler(async (req, res) => {
                             issuerType: { $first: '$issuer.issuerType' },
                             latestRating: { $first: '$issuer.latestRating' },
                             totalActiveBonds: { $sum: 1 },
-                        }
+                        },
                     },
                 ]).toArray(),
 
@@ -584,7 +584,7 @@ issuerRoutes.get('/', validate(schemas.issuerListSchema), asyncHandler(async (re
                         ownershipType: { $first: '$issuer.ownershipType' },
                         totalActiveBonds: { $sum: 1 },
                         avgCouponRate: { $avg: '$couponRate' },
-                    }
+                    },
                 },
                 {
                     $facet: {
@@ -595,7 +595,7 @@ issuerRoutes.get('/', validate(schemas.issuerListSchema), asyncHandler(async (re
                             { $limit: l },
                             { $project: { _id: 0, id: '$_id', name: 1, sector: 1, issuerType: 1, ownershipType: 1, totalActiveBonds: 1, avgCouponRate: { $round: ['$avgCouponRate', 2] } } },
                         ],
-                    }
+                    },
                 },
             ]).toArray();
 

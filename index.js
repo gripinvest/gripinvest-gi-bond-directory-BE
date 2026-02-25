@@ -27,7 +27,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
-const cron = require('node-cron');
 
 const { validateEnv } = require('./bond-directory/config/envValidation');
 const { connectBondDb, getBondCollection, closeBondDb, healthCheck: bondDbHealth } = require('./bond-directory/config/bondDirectoryDb');

@@ -11,21 +11,21 @@ const ingestionLogSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        index: true
+        index: true,
     },
     type: {
         type: String,
         enum: ['daily', 'weekly', 'manual', 'startup'],
-        default: 'manual'
+        default: 'manual',
     },
     status: {
         type: String,
         enum: ['running', 'completed', 'failed', 'partial'],
-        default: 'running'
+        default: 'running',
     },
     startedAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
     },
     completedAt: Date,
     durationMs: Number,
@@ -37,7 +37,7 @@ const ingestionLogSchema = new mongoose.Schema({
         totalCreated: { type: Number, default: 0 },
         totalUpdated: { type: Number, default: 0 },
         totalSkipped: { type: Number, default: 0 },   // Unchanged records
-        totalErrors: { type: Number, default: 0 }
+        totalErrors: { type: Number, default: 0 },
     },
 
     // Endpoints used
@@ -46,7 +46,7 @@ const ingestionLogSchema = new mongoose.Schema({
         recordCount: Number,
         durationMs: Number,
         success: Boolean,
-        error: String
+        error: String,
     }],
 
     // Individual errors (renamed from 'errors' to avoid Mongoose reserved key)
@@ -54,7 +54,7 @@ const ingestionLogSchema = new mongoose.Schema({
         isin: String,
         stage: String,  // 'fetch', 'enrich', 'validate', 'upsert'
         message: String,
-        timestamp: { type: Date, default: Date.now }
+        timestamp: { type: Date, default: Date.now },
     }],
 
     // Circuit breaker state at end of run
@@ -64,11 +64,11 @@ const ingestionLogSchema = new mongoose.Schema({
     schemaDrift: [{
         isin: String,
         missingFields: [String],
-        unexpectedFields: [String]
-    }]
+        unexpectedFields: [String],
+    }],
 }, {
     timestamps: true,
-    collection: 'academy_ingestion_logs'
+    collection: 'academy_ingestion_logs',
 });
 
 // Index for querying recent runs

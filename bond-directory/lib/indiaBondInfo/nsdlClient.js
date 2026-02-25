@@ -57,7 +57,7 @@ class NSDLBondClient {
             resetTimeout: config.resetTimeout || 90000,
             onStateChange: ({ from, to }) => {
                 console.log(`[NSDL Client] Circuit breaker: ${from} → ${to}`);
-            }
+            },
         });
 
         // Stats
@@ -74,8 +74,8 @@ class NSDLBondClient {
             timeout: this.timeout,
             headers: {
                 ...this._getHeaders(),
-                'Cookie': buildCookieHeader()
-            }
+                'Cookie': buildCookieHeader(),
+            },
         });
     }
 
@@ -95,8 +95,8 @@ class NSDLBondClient {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
             'sec-ch-ua': '"Not(A:Brand";v="8", "Chromium";v="144", "Google Chrome";v="144"',
             'sec-ch-ua-mobile': '?0',
-            'sec-ch-ua-platform': '"macOS"'
-        }
+            'sec-ch-ua-platform': '"macOS"',
+        };
     }
 
     async refreshCookies() {
@@ -158,7 +158,7 @@ class NSDLBondClient {
 
                     // Sometimes NSDL returns HTML error page with 200 OK (session expired secretly)
                     if (typeof response.data === 'string' && response.data.includes('<html')) {
-                        throw Object.assign(new Error(`HTML received instead of JSON. Session likely expired.`), { isHtmlSessionError: true });
+                        throw Object.assign(new Error('HTML received instead of JSON. Session likely expired.'), { isHtmlSessionError: true });
                     }
 
                     this.stats.successes++;
@@ -248,7 +248,7 @@ class NSDLBondClient {
                     // Check if the response is actually an HTML error page despite the 200 OK
                     const dataStr = response.data.toString('utf8');
                     if (dataStr.includes('<html')) {
-                        throw Object.assign(new Error(`HTML received instead of Excel. Session likely expired.`), { isHtmlSessionError: true });
+                        throw Object.assign(new Error('HTML received instead of Excel. Session likely expired.'), { isHtmlSessionError: true });
                     }
 
                     this.stats.successes++;
@@ -375,7 +375,7 @@ class NSDLBondClient {
     getStats() {
         return {
             ...this.stats,
-            circuitBreaker: this.circuitBreaker.getStatus()
+            circuitBreaker: this.circuitBreaker.getStatus(),
         };
     }
 
@@ -404,7 +404,7 @@ const nsdlClient = new NSDLBondClient({
     maxRetries: 3,
     baseBackoffMs: 2500,
     failureThreshold: 4,
-    resetTimeout: 90000
+    resetTimeout: 90000,
 });
 
 module.exports = { NSDLBondClient, nsdlClient };

@@ -77,5 +77,17 @@
     "ignorePatterns": [
         "node_modules/",
         "*.json"
+    ],
+    "overrides": [
+        {
+            "files": [
+                "bond-directory/lib/indiaBondInfo/**/*.js"
+            ],
+            "rules": {
+                "no-promise-executor-return": "off",
+                "require-await": "off",
+                "max-len": "off"
+            }
+        }
     ]
 }

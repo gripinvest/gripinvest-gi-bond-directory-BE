@@ -131,7 +131,7 @@ function transformListedSecurity(raw, activeStatus = 'Active') {
             ownershipType: detectOwnershipType(issuerName),
             issuerType: pick(raw, 'Type of Issuer-Ownership', 'Type of Issuer-Nature', 'issuerType', 'issuer_type', 'ownerType') || null,
             latestRating: normalizeRating(rawRating),
-            description: null
+            description: null,
         },
         couponRate: isNaN(couponRate) ? 0 : couponRate,
         couponType: mapCouponType(pick(raw, 'Coupon Type', 'couponType', 'interestType', 'coupon_type', 'interest_type')),
@@ -155,11 +155,11 @@ function transformListedSecurity(raw, activeStatus = 'Active') {
             agency: pick(raw, 'ratingAgency', 'rating_agency') || 'Unknown',
             value: normalizeRating(rawRating),
             date: new Date(),
-            outlook: 'stable'
+            outlook: 'stable',
         }] : [],
         dataSource: `IndiaBondInfo-${activeStatus}`,
         apiResponseRaw: raw,
-        lastSyncedAt: new Date()
+        lastSyncedAt: new Date(),
     };
 }
 
@@ -198,7 +198,7 @@ function extractInterestRateMap(rawArray) {
         const rate = parseFloat(pick(record, 'interestRate', 'couponRate', 'rate') || 0);
         map.set(isin, {
             interestRateCategory: bucket,
-            couponRate: isNaN(rate) ? undefined : rate
+            couponRate: isNaN(rate) ? undefined : rate,
         });
     }
     return map;
@@ -259,7 +259,7 @@ function extractIssuerWiseMap(rawArray) {
             name,
             sector: pick(record, 'sector', 'industrySector', 'industry') || null,
             issuerType: pick(record, 'issuerType', 'issuer_type', 'ownerType', 'category') || null,
-            totalBonds: parseInt(pick(record, 'totalBonds', 'total_bonds', 'bondCount') || 0)
+            totalBonds: parseInt(pick(record, 'totalBonds', 'total_bonds', 'bondCount') || 0),
         });
     }
     return map;
@@ -279,5 +279,5 @@ module.exports = {
     // Exposed helpers for testing
     generateSlug,
     parseDate,
-    normalizeRating
+    normalizeRating,
 };
