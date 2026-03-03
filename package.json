@@ -8,7 +8,9 @@
         "dev": "node --watch index.js",
         "seed": "node bond-directory/scripts/seedBonds.js",
         "lint": "eslint . --ext .js",
-        "lint:fix": "eslint . --ext .js --fix"
+        "lint:fix": "eslint . --ext .js --fix",
+        "format": "prettier --write \"**/*.js\"",
+        "format:check": "prettier --check \"**/*.js\""
     },
     "keywords": [
         "bond",

@@ -33,7 +33,12 @@ const { connectBondDb, getBondCollection, closeBondDb, healthCheck: bondDbHealth
 const { requestId } = require('./bond-directory/middleware/requestId');
 const { requestLogger } = require('./bond-directory/middleware/requestLogger');
 const { errorHandler } = require('./bond-directory/middleware/errorHandler');
-const { mockBondRoutes: bondRoutes, mockIssuerRoutes: issuerRoutes, setBondCollection, setFallbackData } = require('./bond-directory/routes/mockLocalRoutes');
+const { bondRoutes, issuerRoutes, setBondCollection, setFallbackData } = require('./bond-directory/routes/bondRoutes');
+const {
+    API_RATE_LIMIT_MAX,
+    API_RATE_LIMIT_WINDOW_MS,
+    GRACEFUL_SHUTDOWN_MS,
+} = require('./bond-directory/config/constants');
 
 // ─── Startup: Validate Environment ────────────────────────────────────────────
 const env = validateEnv();
@@ -54,17 +59,17 @@ app.use(compression());
 
 app.use(cors({
     origin: env.CORS_ORIGINS
-        ? env.CORS_ORIGINS.split(',').map(s => s.trim())
+        ? env.CORS_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
         : '*',
     methods: ['GET', 'OPTIONS'],
     maxAge: 86400,
 }));
 
-app.use(express.json({ limit: '1mb' }));
+// express.json omitted — this API is read-only (GET only); no request body needed.
 
 app.use('/api/', rateLimit({
-    windowMs: 60 * 1000,
-    max: 200,
+    windowMs: API_RATE_LIMIT_WINDOW_MS,
+    max: API_RATE_LIMIT_MAX,
     standardHeaders: true,
     legacyHeaders: false,
     message: { success: false, error: { code: 'RATE_LIMIT_EXCEEDED', message: 'Too many requests, please try again later.' } },
@@ -141,7 +146,7 @@ let server;
             await closeBondDb();
             process.exit(0);
         });
-        setTimeout(() => process.exit(1), 10000);
+        setTimeout(() => process.exit(1), GRACEFUL_SHUTDOWN_MS);
     };
 
     process.on('SIGTERM', () => shutdown('SIGTERM'));

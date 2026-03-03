@@ -31,11 +31,15 @@ const bondsListSchema = paginationSchema.extend({
     isRestructured: z.enum(['true', 'false']).optional(),
     minRate: z.coerce.number().min(0).max(100).optional(),
     maxRate: z.coerce.number().min(0).max(100).optional(),
-});
+}).refine(
+    data => !(data.minRate !== undefined && data.maxRate !== undefined && data.minRate > data.maxRate),
+    { message: 'minRate must be less than or equal to maxRate', path: ['minRate'] },
+);
 
 const searchSchema = z.object({
     q: z.string().min(2).max(100),
     limit: z.coerce.number().int().min(1).max(50).default(10),
+    page: z.coerce.number().int().min(1).max(10000).default(1),
     status: z.string().max(20).optional(),
 });
 
@@ -66,6 +70,15 @@ const issuerBondsSchema = paginationSchema.extend({
     minRate: z.coerce.number().min(0).max(100).optional(),
     maxRate: z.coerce.number().min(0).max(100).optional(),
     sort: z.enum(['couponRate', 'rating', 'maturityDate']).default('maturityDate'),
+}).refine(
+    data => !(data.minRate !== undefined && data.maxRate !== undefined && data.minRate > data.maxRate),
+    { message: 'minRate must be less than or equal to maxRate', path: ['minRate'] },
+);
+
+const issuerSearchSchema = z.object({
+    q: z.string().min(2).max(100),
+    limit: z.coerce.number().int().min(1).max(20).default(5),
+    page: z.coerce.number().int().min(1).max(10000).default(1),
 });
 
 // ─── Middleware Factory ───────────────────────────────────────────────────────
@@ -120,6 +133,7 @@ module.exports = {
         issuerIdParamSchema,
         issuerListSchema,
         issuerBondsSchema,
+        issuerSearchSchema,
         paginationSchema,
     },
 };

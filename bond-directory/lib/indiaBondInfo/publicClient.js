@@ -1,22 +1,24 @@
 const axios = require('axios');
+const {
+    NSDL_PUBLIC_URL,
+    NSDL_PUBLIC_HTTP_TIMEOUT_MS,
+} = require('../../config/constants');
 
 /**
  * IndiaBondInfo Public API Client
- * 
+ *
  * Uses public endpoints (no authentication required)
  * Base URL: https://www.indiabondinfo.nsdl.com/bds-service/v1/public
- * 
+ *
  * NOTE: This is a scraping approach and may be rate-limited or blocked.
  * Use responsibly with delays between requests.
  */
 
-const BASE_URL = 'https://www.indiabondinfo.nsdl.com/bds-service/v1/public';
-
 class IndiaBondInfoPublicClient {
     constructor(config = {}) {
         this.client = axios.create({
-            baseURL: BASE_URL,
-            timeout: 30000,
+            baseURL: NSDL_PUBLIC_URL,
+            timeout: NSDL_PUBLIC_HTTP_TIMEOUT_MS,
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
                 'Accept': 'application/json',
