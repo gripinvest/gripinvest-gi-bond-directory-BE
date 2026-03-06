@@ -23,6 +23,7 @@ const express = require('express');
 const { normalizeRating, getRatingRank, GRADE_RANK } = require('../lib/ratingNormalizer');
 const { validate, schemas } = require('../middleware/validate');
 const { asyncHandler } = require('../middleware/errorHandler');
+const { MAX_PAGE_LIMIT, DEFAULT_PAGE_LIMIT } = require('../config/constants');
 
 // ─── DB Access ────────────────────────────────────────────────────────────────
 
@@ -57,7 +58,7 @@ const issuerRoutes = express.Router();
 
 function paginateArray(array, page, limit) {
     const p = Math.max(1, parseInt(page) || 1);
-    const l = Math.min(200, Math.max(1, parseInt(limit) || 50));
+    const l = Math.min(MAX_PAGE_LIMIT, Math.max(1, parseInt(limit) || DEFAULT_PAGE_LIMIT));
     const start = (p - 1) * l;
     return {
         data: array.slice(start, start + l),
@@ -166,7 +167,7 @@ bondRoutes.get('/maturing-soon', validate(schemas.maturingSoonSchema), asyncHand
             if (ratingNorm) filter.normalizedRating = ratingNorm;
 
             const p = Math.max(1, parseInt(page) || 1);
-            const l = Math.min(200, Math.max(1, parseInt(limit) || 50));
+            const l = Math.min(MAX_PAGE_LIMIT, Math.max(1, parseInt(limit) || DEFAULT_PAGE_LIMIT));
 
             const [bonds, total] = await Promise.all([
                 collection.find(filter).sort({ maturityDate: 1 }).skip((p - 1) * l).limit(l).toArray(),
@@ -284,7 +285,7 @@ bondRoutes.get('/', validate(schemas.bondsListSchema), asyncHandler(async (req, 
         const { page = 1, limit = 50, sort, activeStatus, bondType, issuer, rating, ratingNorm, maturityYear, isRestructured, minRate, maxRate } = req.query;
 
         const p = Math.max(1, parseInt(page) || 1);
-        const l = Math.min(200, Math.max(1, parseInt(limit) || 50));
+        const l = Math.min(MAX_PAGE_LIMIT, Math.max(1, parseInt(limit) || DEFAULT_PAGE_LIMIT));
 
         if (isMongoAvailable()) {
             const filter = {};
@@ -419,7 +420,7 @@ issuerRoutes.get('/:id/bonds', validate(schemas.issuerBondsSchema), asyncHandler
         const { page = 1, limit = 50, activeStatus, creditRating, minRate, maxRate, sort } = req.query;
 
         const p = Math.max(1, parseInt(page) || 1);
-        const l = Math.min(200, Math.max(1, parseInt(limit) || 50));
+        const l = Math.min(MAX_PAGE_LIMIT, Math.max(1, parseInt(limit) || DEFAULT_PAGE_LIMIT));
 
         if (isMongoAvailable()) {
             const filter = { 'issuer.id': issuerId };
@@ -556,7 +557,7 @@ issuerRoutes.get('/', validate(schemas.issuerListSchema), asyncHandler(async (re
     try {
         const { page = 1, limit = 50, issuerType, ownershipType, sector, sort, q } = req.query;
         const p = Math.max(1, parseInt(page) || 1);
-        const l = Math.min(200, Math.max(1, parseInt(limit) || 50));
+        const l = Math.min(MAX_PAGE_LIMIT, Math.max(1, parseInt(limit) || DEFAULT_PAGE_LIMIT));
 
         if (isMongoAvailable()) {
             // Build match stage

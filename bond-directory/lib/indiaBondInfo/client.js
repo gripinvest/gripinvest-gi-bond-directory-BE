@@ -13,18 +13,23 @@
 
 const axios = require('axios');
 const { CircuitBreaker } = require('./circuitBreaker');
+const {
+    NSDL_BASE_URL,
+    NSDL_REFERER,
+    NSDL_PUBLIC_HTTP_TIMEOUT_MS,
+    CIRCUIT_BREAKER_RESET_MS,
+} = require('../../config/constants');
 
-const BASE_URL = 'https://www.indiabondinfo.nsdl.com/bds-service/v1/public/bdsinfo';
 
 class IndiaBondInfoClient {
     constructor(config = {}) {
         this.client = axios.create({
-            baseURL: BASE_URL,
-            timeout: config.timeout || 30000,
+            baseURL: NSDL_BASE_URL,
+            timeout: config.timeout || NSDL_PUBLIC_HTTP_TIMEOUT_MS,
             headers: {
                 'Accept': 'application/json, text/plain, */*',
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-                'Referer': 'https://www.indiabondinfo.nsdl.com/CBDServices/',
+                'Referer': NSDL_REFERER,
             },
         });
 

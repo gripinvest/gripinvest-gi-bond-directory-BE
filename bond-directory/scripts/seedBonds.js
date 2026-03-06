@@ -18,12 +18,14 @@
 
 'use strict';
 
+const { MONGO_CONNECT_TIMEOUT_MS } = require('../config/constants');
+
 require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
 const { MongoClient } = require('mongodb');
-const { normalizeRating } = require('../lib/ratingNormalizer');
+const { normalizeRating, getRatingRank } = require('../lib/ratingNormalizer');
 
 const MONGO_URI = process.env.BOND_MONGO_URI;
 const COLLECTION_NAME = process.env.BOND_COLLECTION_NAME || 'bondsdirectory';
@@ -47,8 +49,8 @@ async function seed() {
     // 2. Connect to MongoDB
     const client = new MongoClient(MONGO_URI, {
         maxPoolSize: 5,
-        connectTimeoutMS: 15000,
-        serverSelectionTimeoutMS: 15000,
+        connectTimeoutMS: MONGO_CONNECT_TIMEOUT_MS,
+        serverSelectionTimeoutMS: MONGO_CONNECT_TIMEOUT_MS,
     });
     await client.connect();
     const db = client.db();
@@ -98,6 +100,9 @@ async function seed() {
             issueSize: bond.issueSize ?? null,
             creditRating: bond.creditRating || null,
             normalizedRating: nr || 'Unrated',
+            // Numeric sort key for correct rating ordering (AAA=1 = best).
+            // Use this field for MongoDB sort instead of string normalizedRating.
+            ratingRank: getRatingRank(nr),
             ratingAgency: bond.ratingAgency || null,
             activeStatus: bond.activeStatus || 'Active',
             isRestructured: bond.isRestructured || false,
@@ -116,11 +121,21 @@ async function seed() {
     // 6. Bulk insert in batches of 5000
     const BATCH_SIZE = 5000;
     let inserted = 0;
+    let writeErrorCount = 0;
     for (let i = 0; i < docs.length; i += BATCH_SIZE) {
         const batch = docs.slice(i, i + BATCH_SIZE);
         const result = await collection.insertMany(batch, { ordered: false });
         inserted += result.insertedCount;
+        // Detect partial batch failures (e.g. duplicate keys)
+        if (result.insertedCount < batch.length) {
+            const missed = batch.length - result.insertedCount;
+            writeErrorCount += missed;
+            console.warn(`[Seed] ⚠️  Batch ${Math.floor(i / BATCH_SIZE) + 1}: inserted ${result.insertedCount}/${batch.length} — ${missed} write error(s)`);
+        }
         console.log(`[Seed] Inserted ${inserted}/${docs.length} documents...`);
+    }
+    if (writeErrorCount > 0) {
+        console.warn(`[Seed] ⚠️  Total write errors: ${writeErrorCount} — check for duplicate ISINs or schema violations`);
     }
 
     // 7. Create indexes
@@ -134,6 +149,7 @@ async function seed() {
     await collection.createIndex({ isRestructured: 1 }, { name: 'idx_isRestructured' });
     await collection.createIndex({ maturityDate: 1 }, { name: 'idx_maturityDate' });
     await collection.createIndex({ couponRate: 1 }, { name: 'idx_couponRate' });
+    await collection.createIndex({ ratingRank: 1 }, { name: 'idx_ratingRank' });
 
     // Compound indexes for common query patterns
     await collection.createIndex(

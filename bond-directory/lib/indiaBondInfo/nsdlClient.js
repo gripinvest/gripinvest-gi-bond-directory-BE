@@ -18,8 +18,7 @@
 
 const axios = require('axios');
 const { CircuitBreaker } = require('./circuitBreaker');
-
-const BASE_URL = 'https://www.indiabondinfo.nsdl.com/bds-service/v1/public/bdsinfo';
+const { NSDL_BASE_URL } = require('../../config/constants');
 
 /**
  * Build the Cookie header string from environment variables.
@@ -39,7 +38,7 @@ function buildCookieHeader() {
 
 class NSDLBondClient {
     constructor(config = {}) {
-        this.baseURL = BASE_URL;
+        this.baseURL = NSDL_BASE_URL;
         this.timeout = config.timeout || 45000;
 
         // Rate limiting
