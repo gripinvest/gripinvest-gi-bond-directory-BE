@@ -62,7 +62,7 @@ const SAME_RATING_LIMIT = 5;
 const TOP_ISSUERS_LIMIT = 12;
 
 // ─── Rate Limiting ────────────────────────────────────────────────────────────
-/** Max API requests per minute (applied to /api/* routes) */
+/** Max API requests per minute (applied to /bond-directory/api/* routes) */
 const API_RATE_LIMIT_MAX = 200;
 
 /** Rate limit window in milliseconds (1 minute) */

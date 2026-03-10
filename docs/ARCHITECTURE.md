@@ -145,12 +145,12 @@ Middleware is applied in this **exact order** (order is critical):
 
 ### Base URL
 ```
-http://localhost:5050/api
+http://localhost:5050/bond-directory/api
 ```
 
 ### Bond Endpoints
 
-#### `GET /bonds`
+#### `GET /bond-directory/api/bonds`
 List all bonds with filtering, sorting, and pagination.
 
 **Query Parameters:**
@@ -181,7 +181,7 @@ List all bonds with filtering, sorting, and pagination.
 
 ---
 
-#### `GET /bonds/stats`
+#### `GET /bond-directory/api/bonds/stats`
 Aggregated statistics for the entire bond universe.
 
 **Response:**
@@ -201,7 +201,7 @@ Aggregated statistics for the entire bond universe.
 
 ---
 
-#### `GET /bonds/maturing-soon`
+#### `GET /bond-directory/api/bonds/maturing-soon`
 Bonds expiring within N months.
 
 | Param | Type | Default | Description |
@@ -213,7 +213,7 @@ Bonds expiring within N months.
 
 ---
 
-#### `GET /bonds/search`
+#### `GET /bond-directory/api/bonds/search`
 Full-text search by ISIN or issuer name.
 
 | Param | Type | Constraint | Description |
@@ -224,7 +224,7 @@ Full-text search by ISIN or issuer name.
 
 ---
 
-#### `GET /bonds/:isin`
+#### `GET /bond-directory/api/bonds/:isin`
 Single bond detail by ISIN + related bonds from same issuer.
 
 **Path Param:** `isin` — must match ISIN format `^[A-Z]{2}[A-Z0-9]{9}[0-9]$`
@@ -233,7 +233,7 @@ Single bond detail by ISIN + related bonds from same issuer.
 
 ### Issuer Endpoints
 
-#### `GET /issuers`
+#### `GET /bond-directory/api/issuers`
 List issuers (aggregated from bonds collection).
 
 | Param | Type | Default | Description |
@@ -248,7 +248,7 @@ List issuers (aggregated from bonds collection).
 
 ---
 
-#### `GET /issuers/search`
+#### `GET /bond-directory/api/issuers/search`
 Typeahead search for issuers.
 
 | Param | Type | Description |
@@ -258,21 +258,21 @@ Typeahead search for issuers.
 
 ---
 
-#### `GET /issuers/:id`
+#### `GET /bond-directory/api/issuers/:id`
 Full issuer profile with stats.
 
 **Response includes:** `ratingDistribution`, `maturityDistribution`, `couponRateRange`, `totalActiveBonds`, `avgCouponRate`
 
 ---
 
-#### `GET /issuers/:id/bonds`
+#### `GET /bond-directory/api/issuers/:id/bonds`
 Paginated bonds for a specific issuer, with filtering.
 
 ---
 
 ### System Endpoints
 
-#### `GET /api/health`
+#### `GET /bond-directory/api/health`
 ```json
 {
   "status": "OK",
@@ -386,7 +386,7 @@ Paginated bonds for a specific issuer, with filtering.
   "service": "bond-directory",
   "requestId": "4edf4b18-9801-4293-97bb-7108eb7cd75b",
   "method": "GET",
-  "path": "/api/bonds?page=1&limit=50",
+  "path": "/bond-directory/api/bonds?page=1&limit=50",
   "status": 200,
   "durationMs": 45,
   "ip": "::1",
@@ -402,7 +402,7 @@ Paginated bonds for a specific issuer, with filtering.
 | `ERROR` | Request > 2000ms, 5xx response, or uncaught error |
 
 ### Health Check
-`GET /api/health` — reports DB connection, latency, uptime, memory. Use for liveness + readiness probes.
+`GET /bond-directory/api/health` — reports DB connection, latency, uptime, memory. Use for liveness + readiness probes.
 
 ---
 
@@ -421,8 +421,8 @@ Paginated bonds for a specific issuer, with filtering.
 
 ### Future: Redis Cache Layer
 ```
-GET /api/bonds/stats  → Redis (TTL: 5 min)  → MongoDB (miss)
-GET /api/bonds/:isin  → Redis (TTL: 1 hour) → MongoDB (miss)
+GET /bond-directory/api/bonds/stats  → Redis (TTL: 5 min)  → MongoDB (miss)
+GET /bond-directory/api/bonds/:isin  → Redis (TTL: 1 hour) → MongoDB (miss)
 ```
 Planned cache keys: `bond:isin:{ISIN}`, `bonds:stats`, `issuers:list:{hash}`, `bonds:maturing:{months}`
 
@@ -445,7 +445,7 @@ docker run -d \
   gi-bond-directory-be
 
 # Health check
-curl http://localhost:5050/api/health
+curl http://localhost:5050/bond-directory/api/health
 ```
 
 ### Docker Compose (Local Dev)
@@ -458,7 +458,7 @@ services:
       - "5050:5050"
     env_file: .env
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:5050/api/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:5050/bond-directory/api/health"]
       interval: 30s
       timeout: 5s
       retries: 3

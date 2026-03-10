@@ -15,7 +15,7 @@
  *   8. Centralized error handler
  *
  * Graceful shutdown: SIGTERM / SIGINT
- * Health check: GET /api/health
+ * Health check: GET /bond-directory/api/health
  */
 
 'use strict';
@@ -67,7 +67,7 @@ app.use(cors({
 
 // express.json omitted — this API is read-only (GET only); no request body needed.
 
-app.use('/api/', rateLimit({
+app.use('/bond-directory/api/', rateLimit({
     windowMs: API_RATE_LIMIT_WINDOW_MS,
     max: API_RATE_LIMIT_MAX,
     standardHeaders: true,
@@ -79,7 +79,7 @@ app.use(requestLogger);
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 
-app.get('/api/health', async (req, res) => {
+app.get('/bond-directory/api/health', async (req, res) => {
     const bondHealth = await bondDbHealth();
     res.json({
         status: 'OK',
@@ -101,8 +101,8 @@ app.get('/api/health', async (req, res) => {
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
 
-app.use('/api/bonds', bondRoutes);
-app.use('/api/issuers', issuerRoutes);
+app.use('/bond-directory/api/bonds', bondRoutes);
+app.use('/bond-directory/api/issuers', issuerRoutes);
 
 // ─── Centralized Error Handler (must be LAST) ─────────────────────────────────
 
