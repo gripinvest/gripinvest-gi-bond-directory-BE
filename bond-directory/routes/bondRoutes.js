@@ -5,16 +5,16 @@
  * If MongoDB is unavailable, falls back to in-memory JSON data.
  *
  * Endpoints:
- *   GET /api/bonds           — List bonds (filtered, sorted, paginated)
- *   GET /api/bonds/stats     — Aggregated statistics + rating distribution
- *   GET /api/bonds/maturing-soon — Bonds expiring within N months
- *   GET /api/bonds/search    — Text search by ISIN or issuer name (paginated)
- *   GET /api/bonds/:isin     — Single bond detail
+ *   GET /bond-directory/api/bonds           — List bonds (filtered, sorted, paginated)
+ *   GET /bond-directory/api/bonds/stats     — Aggregated statistics + rating distribution
+ *   GET /bond-directory/api/bonds/maturing-soon — Bonds expiring within N months
+ *   GET /bond-directory/api/bonds/search    — Text search by ISIN or issuer name (paginated)
+ *   GET /bond-directory/api/bonds/:isin     — Single bond detail
  *
- *   GET /api/issuers         — List issuers (derived from bonds)
- *   GET /api/issuers/search  — Search issuers by name (paginated)
- *   GET /api/issuers/:id     — Single issuer with stats
- *   GET /api/issuers/:id/bonds — Bonds for a given issuer
+ *   GET /bond-directory/api/issuers         — List issuers (derived from bonds)
+ *   GET /bond-directory/api/issuers/search  — Search issuers by name (paginated)
+ *   GET /bond-directory/api/issuers/:id     — Single issuer with stats
+ *   GET /bond-directory/api/issuers/:id/bonds — Bonds for a given issuer
  */
 
 'use strict';

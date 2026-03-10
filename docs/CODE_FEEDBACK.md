@@ -63,7 +63,7 @@
 
 ### Rate limiting
 **Current state:**  
-- `express-rate-limit` is applied in `index.js` to all `/api/` routes: 200 requests per minute per IP, with a proper JSON error body (`RATE_LIMIT_EXCEEDED`).  
+- `express-rate-limit` is applied in `index.js` to all `/bond-directory/api/` routes: 200 requests per minute per IP, with a proper JSON error body (`RATE_LIMIT_EXCEEDED`).  
 - Health check and all bond/issuer APIs are covered.
 
 **Action:** No code change needed. Optionally document the limit (200/min) and that it's per-IP in `ARCHITECTURE.md` or API docs so frontend/ops know what to expect.
